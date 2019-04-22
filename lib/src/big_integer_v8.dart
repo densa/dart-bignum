@@ -950,10 +950,10 @@ class BigIntegerV8 implements BigInteger {
     return (this.t==0)?this.s:(this_array[0]<<16)>>16;
   }
 
-//  /** return x s.t. r^x < DV */
-//  int chunkSize(r) {
-//    return (Mathx.LN2*BI_DB/Mathx.log(r)).floor().toInt();
-//  }
+  /** return x s.t. r^x < DV */
+  int chunkSize(r) {
+    return (Mathx.ln2*BI_DB/Mathx.log(r)).floor().toInt();
+  }
 
   /** 0 if this == 0, 1 if this > 0 */
   int signum() {
@@ -967,66 +967,66 @@ class BigIntegerV8 implements BigInteger {
     }
   }
 
-//  /** convert to radix string , http://dartbug.com/461 num only supports up to radix 16 */
-//  String toRadix([int b=10]) {
-//    if(b == null) b = 10;
-//    if(this.signum() == 0 || b < 2 || b > 36) return "0";
-//    var cs = this.chunkSize(b);
-//    int a = Mathx.pow(b,cs);
-//    var d = nbv(a), y = nbi(), z = nbi(), r = "";
-//    this.divRemTo(d,y,z);
-//    while(y.signum() > 0) {
-//      r = "${(a+z.intValue()).toInt().toRadixString(b).substring(1)}${r}";
-//      y.divRemTo(d,y,z);
-//    }
-//
-//    return "${z.intValue().toRadixString(b)}${r}";
-//  }
+  /** convert to radix string , http://dartbug.com/461 num only supports up to radix 16 */
+  String toRadix([int b=10]) {
+    if(b == null) b = 10;
+    if(this.signum() == 0 || b < 2 || b > 36) return "0";
+    var cs = this.chunkSize(b);
+    int a = Mathx.pow(b,cs);
+    var d = nbv(a), y = nbi(), z = nbi(), r = "";
+    this.divRemTo(d,y,z);
+    while(y.signum() > 0) {
+      r = "${(a+z.intValue()).toInt().toRadixString(b).substring(1)}${r}";
+      y.divRemTo(d,y,z);
+    }
+
+    return "${z.intValue().toRadixString(b)}${r}";
+  }
 
 
-//  /** convert from radix string */
-//  void fromRadix(s,b) {
-//    this.fromInt(0);
-//
-//    if(b == null) b = 10;
-//
-//    var cs = this.chunkSize(b);
-//    num d = Mathx.pow(b,cs);
-//    bool mi = false;
-//    int j = 0,
-//        w = 0;
-//
-//    for(var i = 0; i < s.length; ++i) {
-//      var x = _intAt(s,i);
-//      if(x < 0) {
-//        if (s is String) {
-//          if(s[0] == "-" && this.signum() == 0) {
-//            mi = true;
-//          }
-//        }
-//        continue;
-//      }
-//      w = b*w+x;
-//      if(++j >= cs) {
-//        this.dMultiply(d);
-//        this.dAddOffset(w,0);
-//        j = 0;
-//        w = 0;
-//      }
-//    }
-//
-//    if(j > 0) {
-//      this.dMultiply(Mathx.pow(b,j));
-//      // w is zero there should not add offset
-//      if (w != 0) {
-//        this.dAddOffset(w,0);
-//      }
-//    }
-//
-//    if(mi)  {
-//      BigIntegerV8.ZERO.subTo(this,this);
-//    }
-//  }
+  /** convert from radix string */
+  void fromRadix(s,b) {
+    this.fromInt(0);
+
+    if(b == null) b = 10;
+
+    var cs = this.chunkSize(b);
+    num d = Mathx.pow(b,cs);
+    bool mi = false;
+    int j = 0,
+        w = 0;
+
+    for(var i = 0; i < s.length; ++i) {
+      var x = _intAt(s,i);
+      if(x < 0) {
+        if (s is String) {
+          if(s[0] == "-" && this.signum() == 0) {
+            mi = true;
+          }
+        }
+        continue;
+      }
+      w = b*w+x;
+      if(++j >= cs) {
+        this.dMultiply(d);
+        this.dAddOffset(w,0);
+        j = 0;
+        w = 0;
+      }
+    }
+
+    if(j > 0) {
+      this.dMultiply(Mathx.pow(b,j));
+      // w is zero there should not add offset
+      if (w != 0) {
+        this.dAddOffset(w,0);
+      }
+    }
+
+    if(mi)  {
+      BigIntegerV8.ZERO.subTo(this,this);
+    }
+  }
 
 
 
@@ -1108,26 +1108,26 @@ class BigIntegerV8 implements BigInteger {
   }
 
 
-//  /** r = this op a (bitwise) */
-//  void bitwiseTo(dynamic a, Function op, dynamic r) {
-//    var this_array = this.array;
-//    var a_array    = a.array;
-//    var r_array    = r.array;
-//    var i, f, m = Mathx.min(a.t,this.t);
-//    for(i = 0; i < m; ++i) r_array[i] = op(this_array[i],a_array[i]);
-//    if(a.t < this.t) {
-//      f = a.s&BI_DM;
-//      for(i = m; i < this.t; ++i) r_array[i] = op(this_array[i],f);
-//      r.t = this.t;
-//    }
-//    else {
-//      f = this.s&BI_DM;
-//      for(i = m; i < a.t; ++i) r_array[i] = op(f,a_array[i]);
-//      r.t = a.t;
-//    }
-//    r.s = op(this.s,a.s);
-//    r.clamp();
-//  }
+  /** r = this op a (bitwise) */
+  void bitwiseTo(dynamic a, Function op, dynamic r) {
+    var this_array = this.array;
+    var a_array    = a.array;
+    var r_array    = r.array;
+    var i, f, m = a.t <= this.t ? a.t : this.t;
+    for(i = 0; i < m; ++i) r_array[i] = op(this_array[i],a_array[i]);
+    if(a.t < this.t) {
+      f = a.s&BI_DM;
+      for(i = m; i < this.t; ++i) r_array[i] = op(this_array[i],f);
+      r.t = this.t;
+    }
+    else {
+      f = this.s&BI_DM;
+      for(i = m; i < a.t; ++i) r_array[i] = op(f,a_array[i]);
+      r.t = a.t;
+    }
+    r.s = op(this.s,a.s);
+    r.clamp();
+  }
 
 
   /** this & a */
@@ -1266,40 +1266,40 @@ class BigIntegerV8 implements BigInteger {
   flipBit(n) { return this.changeBit(n,op_xor); }
 
   /** r = this + a */
-//  addTo(a,r) {
-//    var this_array = this.array;
-//    var a_array = a.array;
-//    var r_array = r.array;
-//    var i = 0, c = 0, m = Mathx.min(a.t,this.t);
-//    while(i < m) {
-//      c += this_array[i]+a_array[i];
-//      r_array[i++] = c&BI_DM;
-//      c >>= BI_DB;
-//    }
-//    if(a.t < this.t) {
-//      c += a.s;
-//      while(i < this.t) {
-//        c += this_array[i];
-//        r_array[i++] = c&BI_DM;
-//        c >>= BI_DB;
-//      }
-//      c += this.s;
-//    }
-//    else {
-//      c += this.s;
-//      while(i < a.t) {
-//        c += a_array[i];
-//        r_array[i++] = c&BI_DM;
-//        c >>= BI_DB;
-//      }
-//      c += a.s;
-//    }
-//    r.s = (c<0)?-1:0;
-//    if(c > 0) { r_array[i++] = c;
-//    } else if(c < -1) r_array[i++] = BI_DV+c;
-//    r.t = i;
-//    r.clamp();
-//  }
+  addTo(a,r) {
+    var this_array = this.array;
+    var a_array = a.array;
+    var r_array = r.array;
+    var i = 0, c = 0, m = a.t <= this.t ? a.t : this.t;
+    while(i < m) {
+      c += this_array[i]+a_array[i];
+      r_array[i++] = c&BI_DM;
+      c >>= BI_DB;
+    }
+    if(a.t < this.t) {
+      c += a.s;
+      while(i < this.t) {
+        c += this_array[i];
+        r_array[i++] = c&BI_DM;
+        c >>= BI_DB;
+      }
+      c += this.s;
+    }
+    else {
+      c += this.s;
+      while(i < a.t) {
+        c += a_array[i];
+        r_array[i++] = c&BI_DM;
+        c >>= BI_DB;
+      }
+      c += a.s;
+    }
+    r.s = (c<0)?-1:0;
+    if(c > 0) { r_array[i++] = c;
+    } else if(c < -1) r_array[i++] = BI_DV+c;
+    r.t = i;
+    r.clamp();
+  }
 
   /** this + a */
   BigIntegerV8 add(a) {
@@ -1376,22 +1376,22 @@ class BigIntegerV8 implements BigInteger {
   }
 
 
-//  /**
-//   * r = lower n words of "this * a", a.t <= n
-//   * "this" should be the larger one if appropriate.
-//   */
-//  multiplyLowerTo(a,n,r) {
-//    var r_array = r.array;
-//    var a_array = a.array;
-//    var i = Mathx.min(this.t+a.t,n);
-//    r.s = 0; // assumes a,this >= 0
-//    r.t = i;
-//    while(i > 0) r_array[--i] = 0;
-//    var j;
-//    for(j = r.t-this.t; i < j; ++i) r_array[i+this.t] = this.am(0,a_array[i],r,i,0,this.t);
-//    for(j = Mathx.min(a.t,n); i < j; ++i) this.am(0,a_array[i],r,i,0,n-i);
-//    r.clamp();
-//  }
+  /**
+   * r = lower n words of "this * a", a.t <= n
+   * "this" should be the larger one if appropriate.
+   */
+  multiplyLowerTo(a,n,r) {
+    var r_array = r.array;
+    var a_array = a.array;
+    var i = this.t+a.t <= n ? this.t+a.t : n;
+    r.s = 0; // assumes a,this >= 0
+    r.t = i;
+    while(i > 0) r_array[--i] = 0;
+    var j;
+    for(j = r.t-this.t; i < j; ++i) r_array[i+this.t] = this.am(0,a_array[i],r,i,0,this.t);
+    for(j = a.t <= n ? a.t : n; i < j; ++i) this.am(0,a_array[i],r,i,0,n-i);
+    r.clamp();
+  }
 
   /**
    * r = "this * a" without lower n words, n > 0
