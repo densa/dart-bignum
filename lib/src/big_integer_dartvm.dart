@@ -247,7 +247,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /** copy [this] to [r] */
-  void copyTo(BigIntegerDartvm r) {
+  void copyTo(dynamic r) {
     r.data = data;
   }
 
@@ -257,7 +257,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /** set from string [s] and radix [b] */
-  void fromString(String s, int b) {
+  void fromString(dynamic s, int b) {
     data = int.parse(s, radix: b, onError: (str) => 0);
   }
   void fromByteArray(List s, [bool fixsign = false]) {
@@ -347,7 +347,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /** r = this << n */
-  void lShiftTo(int n, r) {
+  void lShiftTo(dynamic n, r) {
     r.data = data << n;
   }
 
@@ -378,7 +378,7 @@ class BigIntegerDartvm implements BigInteger {
    * divide this by m, quotient and remainder to q, r (HAC 14.20)
    * r != q, this != m.  q or r may be null.
    */
-  divRemTo(BigIntegerDartvm m, BigIntegerDartvm q, BigIntegerDartvm r) {
+  divRemTo(dynamic m, dynamic q, dynamic r) {
     q.data = data ~/ m.data;
     r.data = data % m.data;
   }
@@ -405,7 +405,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /**  this^e % m, 0 <= e < 2^32 */
-  BigIntegerDartvm modPowInt(int e, BigIntegerDartvm m) {
+  BigIntegerDartvm modPowInt(int e, dynamic m) {
     return new BigIntegerDartvm(data.modPow(e, m.data));
   }
 
@@ -508,19 +508,19 @@ class BigIntegerDartvm implements BigInteger {
     return bytes;
   }
 
-  bool equals(BigIntegerDartvm a) {
+  bool equals(dynamic a) {
     return this.compareTo(a) == 0 ? true : false;
   }
 
-  BigIntegerDartvm min(BigIntegerDartvm a) {
+  BigIntegerDartvm min(dynamic a) {
     return (this.compareTo(a) < 0) ? this : a;
   }
 
-  BigIntegerDartvm max(BigIntegerDartvm a) {
+  BigIntegerDartvm max(dynamic a) {
     return (this.compareTo(a) > 0) ? this : a;
   }
 
-  void bitwiseTo(BigIntegerDartvm a, Function op, BigIntegerDartvm r) {
+  void bitwiseTo(dynamic a, Function op, dynamic r) {
     r.data = op(data, a.data);
   }
 
@@ -573,7 +573,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /** return index of lowest 1-bit in x, x < 2^31 */
-  int lbit(int x) {
+  int lbit(dynamic x) {
     if (x == 0) return -1;
     int r = 0;
     while ((x & 0xffffffff) == 0) {
@@ -608,7 +608,7 @@ class BigIntegerDartvm implements BigInteger {
   int get lowestSetBit => getLowestSetBit();
 
   /** return number of 1 bits in x */
-  cbit(int x) {
+  cbit(dynamic x) {
     var r = 0;
     while (x != 0) {
       x &= x - 1;
@@ -669,7 +669,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /** this % a */
-  BigIntegerDartvm remainder(BigIntegerDartvm a) {
+  BigIntegerDartvm remainder(dynamic a) {
     return new BigIntegerDartvm(data.remainder(a.data));
   }
 
@@ -702,7 +702,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /** this^e % m (HAC 14.85) */
-  modPow(BigIntegerDartvm e, BigIntegerDartvm m) {
+  modPow(dynamic e, dynamic m) {
     return new BigIntegerDartvm(data.modPow(e.data, m.data));
   }
 
@@ -717,7 +717,7 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   /** 1/this % m (HAC 14.61) */
-  BigIntegerDartvm modInverse(BigIntegerDartvm m) {
+  BigIntegerDartvm modInverse(dynamic m) {
     return new BigIntegerDartvm(data.modInverse(m.data));
   }
 
@@ -770,14 +770,14 @@ class BigIntegerDartvm implements BigInteger {
   }
 
   // Arithmetic operations.
-  BigIntegerDartvm operator +(BigIntegerDartvm other) => add(other);
-  BigIntegerDartvm operator -(BigIntegerDartvm other) => subtract(other);
-  BigIntegerDartvm operator *(BigIntegerDartvm other) => multiply(other);
-  BigIntegerDartvm operator %(BigIntegerDartvm other) => mod(other);
-  BigIntegerDartvm operator /(BigIntegerDartvm other) => divide(other);
+  BigIntegerDartvm operator +(dynamic other) => add(other);
+  BigIntegerDartvm operator -(dynamic other) => subtract(other);
+  BigIntegerDartvm operator *(dynamic other) => multiply(other);
+  BigIntegerDartvm operator %(dynamic other) => mod(other);
+  BigIntegerDartvm operator /(dynamic other) => divide(other);
 
   // Truncating division.
-  BigIntegerDartvm operator ~/(BigIntegerDartvm other) => divide(other);
+  BigIntegerDartvm operator ~/(dynamic other) => divide(other);
 
   // The unary '-' operator.
   BigIntegerDartvm operator -() => this.negate_op();
@@ -786,20 +786,20 @@ class BigIntegerDartvm implements BigInteger {
   //BigInteger remainder(BigInteger other) { throw "Not Implemented"; }
 
   // Relational operations.
-  bool operator <(BigIntegerDartvm other) =>
+  bool operator <(dynamic other) =>
       compareTo(other) < 0 ? true : false;
-  bool operator <=(BigIntegerDartvm other) =>
+  bool operator <=(dynamic other) =>
       compareTo(other) <= 0 ? true : false;
-  bool operator >(BigIntegerDartvm other) =>
+  bool operator >(dynamic other) =>
       compareTo(other) > 0 ? true : false;
-  bool operator >=(BigIntegerDartvm other) =>
+  bool operator >=(dynamic other) =>
       compareTo(other) >= 0 ? true : false;
   bool operator ==(other) => compareTo(other) == 0 ? true : false;
 
   // Bit-operations.
-  BigIntegerDartvm operator &(BigIntegerDartvm other) => and(other);
-  BigIntegerDartvm operator |(BigIntegerDartvm other) => or(other);
-  BigIntegerDartvm operator ^(BigIntegerDartvm other) => xor(other);
+  BigIntegerDartvm operator &(dynamic other) => and(other);
+  BigIntegerDartvm operator |(dynamic other) => or(other);
+  BigIntegerDartvm operator ^(dynamic other) => xor(other);
   BigIntegerDartvm operator ~() => not();
   BigIntegerDartvm operator <<(int shiftAmount) => shiftLeft(shiftAmount);
   BigIntegerDartvm operator >>(int shiftAmount) => shiftRight(shiftAmount);
